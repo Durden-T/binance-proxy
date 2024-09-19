@@ -26,7 +26,7 @@ func RateWait(ctx context.Context, class Class, method, path string, query url.V
 			weight = 2
 		} else if limitInt >= 500 && limitInt <= 1000 {
 			weight = 5
-		} else if limitInt > 1000 && limitInt <= 1500 {
+		} else if limitInt > 1000 {
 			weight = 10
 		}
 	case "/api/v3/depth":
@@ -58,7 +58,7 @@ func RateWait(ctx context.Context, class Class, method, path string, query url.V
 			weight = 40
 		}
 	case "/api/v3/exchangeInfo", "/fapi/v1/exchangeInfo", "/api/v3/account", "/api/v3/myTrades":
-		weight = 10
+		weight = 1
 	case "/api/v3/order":
 		if method == http.MethodGet {
 			weight = 2
