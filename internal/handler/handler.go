@@ -1,19 +1,23 @@
 package handler
 
 import (
-	"binance-proxy/service"
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
+
+	"binance-proxy/internal/service"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func NewHandler(ctx context.Context, class service.Class) func(w http.ResponseWriter, r *http.Request) {
+func NewHandler(ctx context.Context, class service.Class, alwaysShowForwards bool) func(w http.ResponseWriter, r *http.Request) {
 	handler := &Handler{
-		srv:   service.NewService(ctx, class),
-		class: class,
+		srv:                service.NewService(ctx, class),
+		class:              class,
+		alwaysShowForwards: alwaysShowForwards,
 	}
 	handler.ctx, handler.cancel = context.WithCancel(ctx)
 
@@ -24,11 +28,14 @@ type Handler struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	class service.Class
-	srv   *service.Service
+	class              service.Class
+	srv                *service.Service
+	alwaysShowForwards bool
 }
 
 func (s *Handler) Router(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+
 	switch r.URL.Path {
 	case "/api/v3/klines", "/fapi/v1/klines":
 		s.klines(w, r)
@@ -45,10 +52,17 @@ func (s *Handler) Router(w http.ResponseWriter, r *http.Request) {
 	default:
 		s.reverseProxy(w, r)
 	}
+	duration := time.Since(start)
+	log.Debugf("%s request %s %s from %s served in %s", s.class, r.Method, r.RequestURI, r.RemoteAddr, duration)
 }
 
 func (s *Handler) reverseProxy(w http.ResponseWriter, r *http.Request) {
-	log.Debugf("%s reverse proxy.Path:%s", s.class, r.URL.RequestURI())
+	msg := fmt.Sprintf("%s request %s %s from %s is not cachable", s.class, r.Method, r.RequestURI, r.RemoteAddr)
+	if s.alwaysShowForwards {
+		log.Infof(msg)
+	} else {
+		log.Tracef(msg)
+	}
 
 	service.RateWait(s.ctx, s.class, r.Method, r.URL.Path, r.URL.Query())
 

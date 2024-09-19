@@ -1,14 +1,15 @@
 package service
 
 import (
-	"binance-proxy/tool"
 	"context"
 	"sync"
+
+	"binance-proxy/internal/tool"
 
 	log "github.com/sirupsen/logrus"
 
 	spot "github.com/adshao/go-binance/v2"
-	futures "github.com/adshao/go-binance/v2/futures"
+	"github.com/adshao/go-binance/v2/futures"
 )
 
 type TickerSrv struct {
@@ -74,17 +75,17 @@ func (s *TickerSrv) Start() {
 			bookDoneC, bookStopC, err := s.connectTickerBook()
 			if err != nil {
 				bookStopC <- struct{}{}
-				log.Errorf("%s.Websocket book ticker connect error!Error:%s", s.si, err)
+				log.Errorf("%s %s bookTicker websocket connection error: %s.", s.si.Class, s.si.Symbol, err)
 				continue
 			}
 
 			ticker24hrDoneC, ticker24hrstopC, err := s.connectTicker24hr()
 			if err != nil {
-				log.Errorf("%s.Websocket 24hr ticker connect error!Error:%s", s.si, err)
+				log.Errorf("%s %s ticker24hr websocket connection error: %s.", s.si.Class, s.si.Symbol, err)
 				continue
 			}
 
-			log.Debugf("%s.Websocket ticker connect success!", s.si)
+			log.Debugf("%s %s ticker24hr and bookTicker websocket connected.", s.si.Class, s.si.Symbol)
 			select {
 			case <-s.ctx.Done():
 				bookStopC <- struct{}{}
@@ -96,7 +97,7 @@ func (s *TickerSrv) Start() {
 				bookStopC <- struct{}{}
 			}
 
-			log.Debugf("%s.Websocket book ticker or ticker 24hr disconnected!Reconnecting", s.si)
+			log.Warnf("%s %s ticker24hr or bookTicker websocket disconnected, trying to reconnect.", s.si.Class, s.si.Symbol)
 		}
 	}()
 }
@@ -167,6 +168,7 @@ func (s *TickerSrv) wsHandlerBookTicker(event *spot.WsBookTickerEvent) {
 		AskPrice:    event.BestAskPrice,
 		AskQuantity: event.BestAskQty,
 	}
+	log.Tracef("%s %s bookTicker websocket message received", s.si.Class, s.si.Symbol)
 }
 
 func (s *TickerSrv) wsHandlerTicker24hr(event *spot.WsMarketStatEvent) {
@@ -198,6 +200,7 @@ func (s *TickerSrv) wsHandlerTicker24hr(event *spot.WsMarketStatEvent) {
 		LastID:             event.LastID,
 		Count:              event.Count,
 	}
+	log.Tracef("%s %s ticker24hr websocket message received", s.si.Class, s.si.Symbol)
 }
 
 func (s *TickerSrv) wsHandlerBookTickerFutures(event *futures.WsBookTickerEvent) {
@@ -211,6 +214,7 @@ func (s *TickerSrv) wsHandlerBookTickerFutures(event *futures.WsBookTickerEvent)
 		AskPrice:    event.BestAskPrice,
 		AskQuantity: event.BestAskQty,
 	}
+	log.Tracef("%s %s bookticker websocket message received", s.si.Class, s.si.Symbol)
 }
 
 func (s *TickerSrv) wsHandlerTicker24hrFutures(event *futures.WsMarketTickerEvent) {
@@ -242,5 +246,5 @@ func (s *TickerSrv) wsHandlerTicker24hrFutures(event *futures.WsMarketTickerEven
 }
 
 func (s *TickerSrv) errHandler(err error) {
-	log.Errorf("%s.Ticker websocket throw error!Error:%s", s.si, err)
+	log.Errorf("%s %s ticker websocket connection error: %s.", s.si.Class, s.si.Symbol, err)
 }

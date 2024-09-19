@@ -1,7 +1,7 @@
 package service
 
 import (
-	"binance-proxy/tool"
+	"binance-proxy/internal/tool"
 	"container/list"
 	"context"
 	"net/http"
@@ -87,11 +87,11 @@ func (s *DepthSrv) Start() {
 
 			doneC, stopC, err := s.connect()
 			if err != nil {
-				log.Errorf("%s.Websocket depth connect error!Error:%s", s.si, err)
+				log.Errorf("%s %s depth websocket connection error: %s.", s.si.Class, s.si.Symbol, err)
 				continue
 			}
 
-			log.Debugf("%s.Websocket depth connect success!", s.si)
+			log.Debugf("%s %s depth websocket connected.", s.si.Class, s.si.Symbol)
 			select {
 			case <-s.ctx.Done():
 				stopC <- struct{}{}
@@ -99,7 +99,7 @@ func (s *DepthSrv) Start() {
 			case <-doneC:
 			}
 
-			log.Debugf("%s.Websocket depth disconnected!Reconnecting", s.si)
+			log.Warnf("%s %s depth websocket disconnected, trying to reconnect.", s.si.Class, s.si.Symbol)
 		}
 	}()
 }
@@ -272,8 +272,8 @@ func (s *DepthSrv) wsHandler(event interface{}) {
 			return
 		} else if v.PrevLastUpdateID != s.LastUpdateID && v.FirstUpdateID > s.LastUpdateID {
 			log.Errorf(
-				"%s.last update id error!FirstUpdateID:%s,LastUpdateID:%s,PrevLastUpdateID:%s,LocalUpdateID:%s",
-				s.si, v.FirstUpdateID, v.LastUpdateID, v.PrevLastUpdateID, s.LastUpdateID,
+				"%s %s last update id error!FirstUpdateID:%s,LastUpdateID:%s,PrevLastUpdateID:%s,LocalUpdateID:%s",
+				s.si.Class,s.si.Symbol, v.FirstUpdateID, v.LastUpdateID, v.PrevLastUpdateID, s.LastUpdateID,
 			)
 			s.Reset()
 			return
