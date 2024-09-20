@@ -1,14 +1,15 @@
 package handler
 
 import (
-    "encoding/json"
-    "net/http"
-    "strconv"
-    "time"
+	"net/http"
+	"strconv"
+	"time"
 
-    log "github.com/sirupsen/logrus"
+	json "binance-proxy/internal/tool"
 
-    "binance-proxy/internal/service"
+	log "github.com/sirupsen/logrus"
+
+	"binance-proxy/internal/service"
 )
 
 func (s *Handler) klines(w http.ResponseWriter, r *http.Request) {

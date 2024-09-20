@@ -1,10 +1,11 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
+
+	json "binance-proxy/internal/tool"
 )
 
 func (s *Handler) ticker(w http.ResponseWriter, r *http.Request) {

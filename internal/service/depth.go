@@ -1,7 +1,6 @@
 package service
 
 import (
-	"binance-proxy/internal/tool"
 	"container/list"
 	"context"
 	"net/http"
@@ -9,10 +8,12 @@ import (
 	"sync"
 	"time"
 
+	"binance-proxy/internal/tool"
+
 	log "github.com/sirupsen/logrus"
 
 	spot "github.com/adshao/go-binance/v2"
-	futures "github.com/adshao/go-binance/v2/futures"
+	"github.com/adshao/go-binance/v2/futures"
 )
 
 type PriceLevel struct {
@@ -109,7 +110,7 @@ func (s *DepthSrv) Stop() {
 }
 
 func (s *DepthSrv) errHandler(err error) {
-	log.Errorf("%s.Depth websocket throw error!Error:%s", s.si, err)
+	log.Errorf("%s %s Depth websocket throw error!Error:%s", s.si.Class, s.si.Symbol, err)
 }
 
 func (s *DepthSrv) connect() (doneC, stopC chan struct{}, err error) {
@@ -273,7 +274,7 @@ func (s *DepthSrv) wsHandler(event interface{}) {
 		} else if v.PrevLastUpdateID != s.LastUpdateID && v.FirstUpdateID > s.LastUpdateID {
 			log.Errorf(
 				"%s %s last update id error!FirstUpdateID:%s,LastUpdateID:%s,PrevLastUpdateID:%s,LocalUpdateID:%s",
-				s.si.Class,s.si.Symbol, v.FirstUpdateID, v.LastUpdateID, v.PrevLastUpdateID, s.LastUpdateID,
+				s.si.Class, s.si.Symbol, v.FirstUpdateID, v.LastUpdateID, v.PrevLastUpdateID, s.LastUpdateID,
 			)
 			s.Reset()
 			return

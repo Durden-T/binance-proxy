@@ -55,7 +55,13 @@ var (
 	ctx, cancel        = context.WithCancel(context.Background())
 )
 
+func init() {
+	t := http.DefaultTransport.(*http.Transport)
+	t.MaxIdleConnsPerHost = 200
+}
+
 func main() {
+
 	log.SetFormatter(&log.TextFormatter{
 		DisableColors: true,
 		FullTimestamp: true,
