@@ -58,7 +58,7 @@ func (s *Service) autoRemoveExpired() {
 		aliveKlines[si.Symbol] = struct{}{}
 
 		if t, ok := s.lastGetKlines.Load(si); ok {
-			expiry := 2 * INTERVAL_2_DURATION[si.Interval]
+			expiry := 2*INTERVAL_2_DURATION[si.Interval] + time.Minute*5
 			if time.Now().Sub(t.(time.Time)) > expiry {
 				// log.Debugf("%s.Kline srv expired!Removed %d", si, expiry)
 				log.Debugf("%s %s@%s kline websocket closed after being idle for %.0fs.", si.Class, si.Symbol, si.Interval, expiry.Seconds())
