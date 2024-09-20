@@ -2,8 +2,6 @@
 FROM golang:1.20 as builder
 WORKDIR /app
 COPY . .
-RUN go mod download
-RUN go mod vendor
 RUN go mod tidy
 RUN CGO_ENABLED=0 go build -o binance-proxy ./cmd/binance-proxy/main.go
 
