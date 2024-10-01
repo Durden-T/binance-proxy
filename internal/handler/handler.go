@@ -46,8 +46,8 @@ func (s *Handler) Router(w http.ResponseWriter, r *http.Request) {
 	case "/api/v3/ticker/24hr", "/fapi/v1/ticker/24hr":
 		s.ticker(w, r)
 
-	case "/api/v3/exchangeInfo", "/fapi/v1/exchangeInfo":
-		s.exchangeInfo(w, r)
+	// case "/api/v3/exchangeInfo", "/fapi/v1/exchangeInfo":
+	// 	s.exchangeInfo(w, r)
 
 	default:
 		s.reverseProxy(w, r)
