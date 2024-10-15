@@ -63,16 +63,20 @@ func init() {
 	t.MaxIdleConnsPerHost = 200
 	t.MaxIdleConns = 200
 	futures.WebsocketKeepalive = true
+	syncTime(ctx)
 	go func() {
 		tk := time.NewTicker(time.Minute)
 		defer tk.Stop()
 
-		ctx := context.Background()
 		for range tk.C {
-			offset, _ := futures.NewClient("", "").NewSetServerTimeService().Do(ctx)
-			log.Infof("Set time offset to %d", offset)
+			syncTime(ctx)
 		}
 	}()
+}
+
+func syncTime(ctx context.Context) {
+	offset, _ := futures.NewClient("", "").NewSetServerTimeService().Do(ctx)
+	log.Infof("Set time offset to %d", offset)
 }
 
 func main() {
