@@ -69,7 +69,8 @@ func init() {
 
 		ctx := context.Background()
 		for range tk.C {
-			_, _ = futures.NewClient("", "").NewSetServerTimeService().Do(ctx)
+			offset, _ := futures.NewClient("", "").NewSetServerTimeService().Do(ctx)
+			log.Infof("Set time offset to %d", offset)
 		}
 	}()
 }
@@ -77,8 +78,9 @@ func init() {
 func main() {
 
 	log.SetFormatter(&log.TextFormatter{
-		DisableColors: true,
-		FullTimestamp: true,
+		DisableColors:   true,
+		FullTimestamp:   true,
+		TimestampFormat: time.RFC3339Nano,
 	})
 
 	log.Infof("Binance proxy version %s, build time %s", Version, Buildtime)
