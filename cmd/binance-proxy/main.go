@@ -8,6 +8,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
+
+	"github.com/adshao/go-binance/v2/futures"
 
 	"binance-proxy/internal/handler"
 	"binance-proxy/internal/service"
@@ -58,6 +61,17 @@ var (
 func init() {
 	t := http.DefaultTransport.(*http.Transport)
 	t.MaxIdleConnsPerHost = 200
+	t.MaxIdleConns = 200
+	futures.WebsocketKeepalive = true
+	go func() {
+		tk := time.NewTicker(time.Minute)
+		defer tk.Stop()
+
+		ctx := context.Background()
+		for range tk.C {
+			_, _ = futures.NewClient("", "").NewSetServerTimeService().Do(ctx)
+		}
+	}()
 }
 
 func main() {
