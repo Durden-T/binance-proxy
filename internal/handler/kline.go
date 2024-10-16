@@ -90,7 +90,9 @@ func (s *Handler) klines(w http.ResponseWriter, r *http.Request) {
 				"0.0",
 				"0",
 			})
-			klines = klines[len(klines)-limitInt:]
+			if len(klines) > limitInt {
+				klines = klines[len(klines)-limitInt:]
+			}
 		}
 	}
 
