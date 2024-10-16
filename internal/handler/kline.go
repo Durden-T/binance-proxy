@@ -70,6 +70,30 @@ func (s *Handler) klines(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	var fakeKlineTimestampOpen int64 = 0
+	if len(data) > 0 && time.Now().UnixNano()/1e6 > data[len(data)-1].CloseTime {
+		fakeKlineTimestampOpen = data[len(data)-1].CloseTime + 1
+		log.Tracef("%s %s@%s kline requested for %s but not yet received", s.class, symbol, interval, strconv.FormatInt(fakeKlineTimestampOpen, 10))
+		if s.enableFakeKline {
+			log.Tracef("%s %s@%s kline faking candle for timestamp %s", s.class, symbol, interval, strconv.FormatInt(fakeKlineTimestampOpen, 10))
+			klines = append(klines, []interface{}{
+				data[len(data)-1].CloseTime + 1,
+				data[len(data)-1].Close,
+				data[len(data)-1].Close,
+				data[len(data)-1].Close,
+				data[len(data)-1].Close,
+				"0.0",
+				data[len(data)-1].CloseTime + 1 + (data[len(data)-1].CloseTime - data[len(data)-1].OpenTime),
+				"0.0",
+				0,
+				"0.0",
+				"0.0",
+				"0",
+			})
+			klines = klines[len(klines)-limitInt:]
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Data-Source", "websocket")
 	j, _ := json.Marshal(klines)

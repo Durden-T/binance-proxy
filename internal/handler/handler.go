@@ -13,10 +13,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NewHandler(ctx context.Context, class service.Class, alwaysShowForwards bool) func(w http.ResponseWriter, r *http.Request) {
+func NewHandler(ctx context.Context, class service.Class, enableFakeKline bool, alwaysShowForwards bool) func(w http.ResponseWriter, r *http.Request) {
 	handler := &Handler{
 		srv:                service.NewService(ctx, class),
 		class:              class,
+		enableFakeKline:    enableFakeKline,
 		alwaysShowForwards: alwaysShowForwards,
 	}
 	handler.ctx, handler.cancel = context.WithCancel(ctx)
@@ -30,6 +31,7 @@ type Handler struct {
 
 	class              service.Class
 	srv                *service.Service
+	enableFakeKline    bool
 	alwaysShowForwards bool
 }
 

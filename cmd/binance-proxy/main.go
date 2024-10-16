@@ -19,10 +19,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func startProxy(ctx context.Context, port int, class service.Class, alwaysshowforwards bool) {
+func startProxy(ctx context.Context, port int, class service.Class, disablefakekline bool, alwaysshowforwards bool) {
 	mux := http.NewServeMux()
 	address := fmt.Sprintf(":%d", port)
-	mux.HandleFunc("/", handler.NewHandler(ctx, class, alwaysshowforwards))
+	mux.HandleFunc("/", handler.NewHandler(ctx, class, !disablefakekline, alwaysshowforwards))
 
 	log.Infof("%s websocket proxy starting on port %d.", class, port)
 	if err := http.ListenAndServe(address, mux); err != nil {
@@ -45,6 +45,7 @@ type Config struct {
 	Verbose            []bool `short:"v" long:"verbose" env:"BPX_VERBOSE" description:"Verbose output (increase with -vv)"`
 	SpotAddress        int    `short:"p" long:"port-spot" env:"BPX_PORT_SPOT" description:"Port to which to bind for SPOT markets" default:"8090"`
 	FuturesAddress     int    `short:"t" long:"port-futures" env:"BPX_PORT_FUTURES" description:"Port to which to bind for FUTURES markets" default:"8091"`
+	DisableFakeKline   bool   `short:"c" long:"disable-fake-candles" env:"BPX_DISABLE_FAKE_CANDLES" description:"Disable generation of fake candles (ohlcv) when sockets have not delivered data yet"`
 	DisableSpot        bool   `short:"s" long:"disable-spot" env:"BPX_DISABLE_SPOT" description:"Disable proxying spot markets"`
 	DisableFutures     bool   `short:"f" long:"disable-futures" env:"BPX_DISABLE_FUTURES" description:"Disable proxying futures markets"`
 	AlwaysShowForwards bool   `short:"a" long:"always-show-forwards" env:"BPX_ALWAYS_SHOW_FORWARDS" description:"Always show requests forwarded via REST even if verbose is disabled"`
@@ -120,10 +121,10 @@ func main() {
 	go handleSignal()
 
 	if !config.DisableSpot {
-		go startProxy(ctx, config.SpotAddress, service.SPOT, config.AlwaysShowForwards)
+		go startProxy(ctx, config.SpotAddress, service.SPOT, config.DisableFakeKline, config.AlwaysShowForwards)
 	}
 	if !config.DisableFutures {
-		go startProxy(ctx, config.FuturesAddress, service.FUTURES, config.AlwaysShowForwards)
+		go startProxy(ctx, config.FuturesAddress, service.FUTURES, config.DisableFakeKline, config.AlwaysShowForwards)
 	}
 	<-ctx.Done()
 
