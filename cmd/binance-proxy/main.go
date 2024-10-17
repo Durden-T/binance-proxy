@@ -76,8 +76,7 @@ func init() {
 }
 
 func syncTime(ctx context.Context) {
-	offset, _ := futures.NewClient("", "").NewSetServerTimeService().Do(ctx)
-	log.Infof("Set time offset to %d", offset)
+	futures.NewClient("", "").NewSetServerTimeService().Do(ctx)
 }
 
 func main() {
