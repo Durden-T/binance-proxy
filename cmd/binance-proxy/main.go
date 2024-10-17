@@ -61,8 +61,8 @@ var (
 
 func init() {
 	t := http.DefaultTransport.(*http.Transport)
-	t.MaxIdleConnsPerHost = 200
-	t.MaxIdleConns = 200
+	t.MaxIdleConnsPerHost = 400
+	t.MaxIdleConns = 400
 	futures.WebsocketKeepalive = true
 	syncTime(ctx)
 	go func() {
