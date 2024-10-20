@@ -12,10 +12,9 @@ import (
 
 	"github.com/adshao/go-binance/v2/futures"
 
-	"binance-proxy/internal/handler"
-	"binance-proxy/internal/service"
+	"github.com/Durden-T/binance-proxy/internal/handler"
+	"github.com/Durden-T/binance-proxy/internal/service"
 
-	"github.com/jessevdk/go-flags"
 	log "github.com/sirupsen/logrus"
 )
 

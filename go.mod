@@ -1,4 +1,4 @@
-module binance-proxy
+module github.com/Durden-T/binance-proxy
 
 go 1.22.7
 

@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	json "binance-proxy/internal/tool"
+	json "github.com/Durden-T/binance-proxy/internal/tool"
 )
 
 func (s *Handler) ticker(w http.ResponseWriter, r *http.Request) {
