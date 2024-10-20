@@ -1,6 +1,6 @@
 module binance-proxy
 
-go 1.22.7
+go 1.21
 
 require (
 	github.com/adshao/go-binance/v2 v2.6.1
