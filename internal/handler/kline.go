@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"time"
 
-	json "github.com/Durden-T/binance-proxy/internal/tool"
+	json "binance-proxy/internal/tool"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/Durden-T/binance-proxy/internal/service"
+	"binance-proxy/internal/service"
 )
 
 func (s *Handler) klines(w http.ResponseWriter, r *http.Request) {

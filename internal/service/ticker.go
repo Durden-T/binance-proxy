@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/Durden-T/binance-proxy/internal/tool"
+	"binance-proxy/internal/tool"
 
 	log "github.com/sirupsen/logrus"
 

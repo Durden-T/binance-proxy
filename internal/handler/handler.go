@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/Durden-T/binance-proxy/internal/service"
+	"binance-proxy/internal/service"
 
 	log "github.com/sirupsen/logrus"
 )

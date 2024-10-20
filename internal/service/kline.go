@@ -1,9 +1,9 @@
 package service
 
 import (
+	"binance-proxy/internal/tool"
 	"container/list"
 	"context"
-	"github.com/Durden-T/binance-proxy/internal/tool"
 	"net/http"
 	"net/url"
 	"sync"
