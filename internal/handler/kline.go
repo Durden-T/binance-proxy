@@ -24,7 +24,7 @@ func (s *Handler) klines(w http.ResponseWriter, r *http.Request) {
 	startTime := time.Unix(int64(startTimeUnix/1000), 0)
 
 	switch {
-	case limitInt <= 0, limitInt > 1000,
+	case limitInt <= 0, limitInt > 1500,
 		startTime.Unix() > 0 && startTime.Before(time.Now().Add(service.INTERVAL_2_DURATION[interval]*999*-1)),
 		r.URL.Query().Get("endTime") != "",
 		r.URL.Query().Get("startTime") == "0",

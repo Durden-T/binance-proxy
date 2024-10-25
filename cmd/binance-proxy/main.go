@@ -15,7 +15,6 @@ import (
 	"binance-proxy/internal/handler"
 	"binance-proxy/internal/service"
 
-	"github.com/jessevdk/go-flags"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -64,19 +63,6 @@ func init() {
 	t.MaxIdleConnsPerHost = 400
 	t.MaxIdleConns = 400
 	futures.WebsocketKeepalive = true
-	syncTime(ctx)
-	go func() {
-		tk := time.NewTicker(time.Minute)
-		defer tk.Stop()
-
-		for range tk.C {
-			syncTime(ctx)
-		}
-	}()
-}
-
-func syncTime(ctx context.Context) {
-	futures.NewClient("", "").NewSetServerTimeService().Do(ctx)
 }
 
 func main() {
