@@ -106,17 +106,17 @@ func (s *KlinesSrv) initKlineData() {
 	for d := tool.NewDelayIterator(); ; d.Delay() {
 		if s.si.Class == SPOT {
 			RateWait(s.ctx, s.si.Class, http.MethodGet, "/api/v3/klines", url.Values{
-				"limit": []string{"1500"},
+				"limit": []string{"1000"},
 			})
 			klines, err = spot.NewClient("", "").NewKlinesService().
-				Symbol(s.si.Symbol).Interval(s.si.Interval).Limit(1500).
+				Symbol(s.si.Symbol).Interval(s.si.Interval).Limit(1000).
 				Do(s.ctx)
 		} else {
 			RateWait(s.ctx, s.si.Class, http.MethodGet, "/fapi/v1/klines", url.Values{
-				"limit": []string{"1500"},
+				"limit": []string{"1000"},
 			})
 			klines, err = futures.NewClient("", "").NewKlinesService().
-				Symbol(s.si.Symbol).Interval(s.si.Interval).Limit(1500).
+				Symbol(s.si.Symbol).Interval(s.si.Interval).Limit(1000).
 				Do(s.ctx)
 		}
 		if err != nil {
@@ -215,7 +215,7 @@ func (s *KlinesSrv) wsHandler(event interface{}) {
 		s.klinesList.Back().Value = k
 	}
 
-	for s.klinesList.Len() > 1500 {
+	for s.klinesList.Len() > 1000 {
 		s.klinesList.Remove(s.klinesList.Front())
 	}
 
