@@ -15,6 +15,7 @@ import (
 	"binance-proxy/internal/handler"
 	"binance-proxy/internal/service"
 
+	flags "github.com/jessevdk/go-flags"
 	log "github.com/sirupsen/logrus"
 )
 
