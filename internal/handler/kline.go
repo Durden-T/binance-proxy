@@ -28,7 +28,7 @@ func (s *Handler) klines(w http.ResponseWriter, r *http.Request) {
 		startTime.Unix() > 0 && startTime.Before(time.Now().Add(service.INTERVAL_2_DURATION[interval]*999*-1)),
 		r.URL.Query().Get("endTime") != "",
 		r.URL.Query().Get("startTime") == "0",
-		symbol == "", interval == "", interval == "1d":
+		symbol == "", interval == "":
 		log.Tracef("%s %s@%s kline proxying via REST", s.class, symbol, interval)
 		s.reverseProxy(w, r)
 		return
