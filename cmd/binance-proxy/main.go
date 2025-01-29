@@ -15,7 +15,7 @@ import (
 	"binance-proxy/internal/handler"
 	"binance-proxy/internal/service"
 
-	flags "github.com/jessevdk/go-flags"
+	"github.com/jessevdk/go-flags"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -61,9 +61,10 @@ var (
 
 func init() {
 	t := http.DefaultTransport.(*http.Transport)
-	t.MaxIdleConnsPerHost = 400
-	t.MaxIdleConns = 400
+	t.MaxIdleConnsPerHost = 1000
+	t.MaxIdleConns = 1000
 	futures.WebsocketKeepalive = true
+	futures.WebsocketTimeout = 30 * time.Second
 }
 
 func main() {
